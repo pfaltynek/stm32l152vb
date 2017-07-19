@@ -146,28 +146,34 @@ void SysTick_Handler(void)
 {
 }
 
+
 /******************************************************************************/
 /*                 STM32L1xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
 /*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32l1xx_xx.s).                                            */
+/*  file (startup_stm32l1xx_md.s).                                            */
 /******************************************************************************/
 
+extern void tim2_interrupt_handler();
 /**
-  * @brief  This function handles PPP interrupt request.
+  * @brief  This function handles TIMER 2 interrupt request.
   * @param  None
   * @retval None
   */
-/*void PPP_IRQHandler(void)
+void TIM2_IRQHandler(void)
 {
-}*/
+    tim2_interrupt_handler();
+}
 
-/**
-  * @}
-  */ 
+void TIM3_IRQHandler(void)
+{
 
-/**
-  * @}
-  */ 
+}
+extern void exti15_10_interrupt_handler();
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+void EXTI15_10_IRQHandler(void)
+{
+    exti15_10_interrupt_handler();
+}
+
+/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

@@ -1,44 +1,107 @@
-#include "stm32l1xx.h"
-#include "stm32l152_eval.h"
-
-#define GPIO_PIN_X GPIO_Pin_10
-#define GPIO_PIN_Y GPIO_Pin_11
-#define BSRR_VAL0 0x0C00
-#define BSRR_VAL1 0x0800
-#define BSRR_VAL2 0x0400
-
-GPIO_InitTypeDef GPIO_InitStructure;
+#include "button.h"
+#include "led.h"
+#include "stm32l1xx.h" // due temporary use of __IO
 
 void Delay(__IO uint32_t nCount) {
 	while (nCount--) {
 	}
 }
+
+uint32_t led_speed[] = {1000, 900, 800, 700, 500, 400};
+uint8_t led_speed_at = 0;
+uint8_t led_speed_count = 6;
+
+void enable_timer(TIM_TypeDef *timer,
+				  uint32_t enable_reg,
+				  uint16_t prescaler,
+				  uint32_t period) {
+	TIM_TimeBaseInitTypeDef timer_init_struct;
+
+	// Enable peripheral clock for timer.
+	RCC_APB1PeriphClockCmd(enable_reg, ENABLE);
+	RCC_APB1PeriphResetCmd(enable_reg, DISABLE);
+
+	timer_init_struct.TIM_Prescaler = prescaler;
+	// Here we set counter mode to up.
+	timer_init_struct.TIM_CounterMode = TIM_CounterMode_Up;
+	timer_init_struct.TIM_Period = period;
+	timer_init_struct.TIM_ClockDivision = TIM_CKD_DIV1;
+	TIM_TimeBaseInit(timer, &timer_init_struct);
+
+	TIM_ClearITPendingBit(timer, TIM_FLAG_Update);
+	TIM_ITConfig(timer, TIM_FLAG_Update, ENABLE);
+
+	TIM_Cmd(timer, ENABLE);
+}
+
+void enable_interrupt(IRQn_Type interrupt,
+					  uint8_t preemption_prio,
+					  uint8_t sub_prio) {
+	__disable_irq();
+
+	NVIC_InitTypeDef interr;
+	interr.NVIC_IRQChannel = interrupt;
+	interr.NVIC_IRQChannelPreemptionPriority = preemption_prio;
+	interr.NVIC_IRQChannelSubPriority = sub_prio;
+	interr.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&interr);
+
+	__enable_irq();
+}
+
+void tim2_interrupt_handler() {
+	TIM_ClearITPendingBit(TIM2, TIM_FLAG_Update);
+	toggle_led(LED_ORANGE);
+}
+
+void exti15_10_interrupt_handler() {
+	if (EXTI_GetFlagStatus(EXTI_Line13) == SET) {
+		toggle_led(LED_GREEN);
+
+		TIM_SetAutoreload(TIM2, led_speed[led_speed_at]);
+		TIM_SetCounter(TIM2, 0);
+		led_speed_at++;
+		if (led_speed_at == led_speed_count) {
+			led_speed_at = 0;
+		}
+
+		EXTI_ClearITPendingBit(EXTI_Line13);
+	}
+}
+
 int main(void) {
-	// GPIOE Periph clock enable
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOE, ENABLE);
+    SystemInit();
 
-	// Configure PD100 and PD111 in output pushpull mode
-	GPIO_InitStructure.GPIO_Pin = GPIO_PIN_X | GPIO_PIN_Y;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_40MHz;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOE, &GPIO_InitStructure);
+#ifndef  EMB_FLASH
+    /* Set the Vector Table base location at 0x20000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
+#else  /* VECT_TAB_FLASH  */
+    /* Set the Vector Table base location at 0x08000000 */
+    NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+#endif
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
 
-	// Set LEDs off
-	GPIOE->BSRRL = BSRR_VAL0;
+	init_led(LED_ORANGE);
+	init_led(LED_GREEN);
+
+	init_button();
+	enable_button();
+
+	set_led_on(LED_ORANGE);
+	set_led_off(LED_GREEN);
+
+    enable_interrupt(TIM2_IRQn, 7, 0);
+    enable_interrupt(EXTI15_10_IRQn, 7, 1);
+
+    while (1) {}
 
 	while (1) {
-		// Set GREEN LED on and ORANGE LED off
-		GPIOE->BSRRL = BSRR_VAL1;
-		GPIOE->BSRRH = BSRR_VAL2;
-
+		// delay
 		Delay(5000000);
 
-		// Set GREEN LED off and ORANGE LED on
-		GPIOE->BSRRH = BSRR_VAL1;
-		GPIOE->BSRRL = BSRR_VAL2;
+		// toggle leds
+		toggle_led(LED_ORANGE);
+		toggle_led(LED_GREEN);
 
-		Delay(10000000);
 	}
 }
