@@ -2,21 +2,6 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Debug GDB ARM",
-			"type": "gdb",
-			"request": "attach",
-			"executable": "${workspaceRoot}\\bin\\Debug\\led-flash-stdlib.elf",
-			"target": "localhost:2331",
-			"cwd": "${workspaceRoot}",
-			"gdbpath": "arm-none-eabi-gdb.exe",
-            "remote": true,
-            "autorun": [
-                "load ./bin/Debug/led-flash-stdlib.elf",
-                "break main",
-                "monitor reset"
-            ]            
-		},
-		{
 			"name": "GDB ARM",
 			"type": "cppdbg",
 			"request": "launch",
@@ -71,6 +56,21 @@
 			],
 			"externalConsole": false,
 			"cwd": "${workspaceRoot}"
+		},
+		{
+			"name": "Old Debug GDB ARM",
+			"type": "gdb",
+			"request": "attach",
+			"executable": "${workspaceRoot}\\bin\\Debug\\led-flash-stdlib.elf",
+			"target": "localhost:2331",
+			"cwd": "${workspaceRoot}",
+			"gdbpath": "arm-none-eabi-gdb.exe",
+            "remote": true,
+            "autorun": [
+                "load ./bin/Debug/led-flash-stdlib.elf",
+                "break main",
+                "monitor reset"
+            ]            
 		}
 	]
 }
