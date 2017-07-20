@@ -94,8 +94,8 @@ IF "%makeconfig%"=="clean" (
 		mkdir lst
 	)
 	arm-none-eabi-gcc !objects! -o ./bin/%outpath%/%target%.elf %optlink%
+	arm-none-eabi-objcopy -O binary ./bin/%outpath%/%target%.elf ./bin/%outpath%/%target%.bin
 	arm-none-eabi-size ./bin/%outpath%/%target%.elf
-
 )
 EXIT /B
 
