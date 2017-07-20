@@ -50,7 +50,7 @@ IF "%makeconfig%"=="debug" (
 SET optallcpp=-c -mthumb -mcpu=cortex-m3 -std=gnu11 -O0 -ffunction-sections -fdata-sections -g -fstack-usage -Wall -specs=nano.specs
 SET optallasm=-c -mthumb -mcpu=cortex-m3 -Wa,--warn -x assembler-with-cpp
 SET optlink=-lm -mthumb -mcpu=cortex-m3 -TSTM32L152VB_FLASH.ld -Wl,--start-group -lc -lm -Wl,--end-group -static -Wl,-cref,-u,Reset_Handler -Wl,-Map=./lst/%target%.map -Wl,--gc-sections -Wl,--defsym=malloc_getpagesize_P=0x1000
-SET defines=-DUSE_STM32L152_EVAL -DUSE_DEFAULT_TIMEOUT_CALLBACK -DSTM32L1XX_MD -DUSE_STDPERIPH_DRIVER
+SET defines=-DUSE_STM32L152_EVAL -DUSE_DEFAULT_TIMEOUT_CALLBACK -DSTM32L1XX_MD -DUSE_STDPERIPH_DRIVER -DEMB_FLASH
 SET objects=
 
 IF "%makeconfig%"=="clean" ( 

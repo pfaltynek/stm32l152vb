@@ -7,7 +7,7 @@ void Delay(__IO uint32_t nCount) {
 	}
 }
 
-uint32_t led_speed[] = {1000, 900, 800, 700, 500, 400};
+uint32_t led_speed[] = {3000, 2000, 1500, 1000, 500, 5000};
 uint8_t led_speed_at = 0;
 uint8_t led_speed_count = 6;
 
@@ -85,7 +85,9 @@ int main(void) {
 	init_led(LED_GREEN);
 
 	init_button();
+
 	enable_button();
+	enable_timer(TIM2, RCC_APB1Periph_TIM2, 3200, 5000);
 
 	set_led_on(LED_ORANGE);
 	set_led_off(LED_GREEN);
