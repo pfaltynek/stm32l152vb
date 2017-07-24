@@ -1,7 +1,3 @@
-#include "button.h"
-#include "led.h"
-#include "interrupt.h"
-#include "timer.h"
 #include "stm32l1xx.h"
 
 // Jumpers:
@@ -11,14 +7,13 @@
 //		B0_0/B0_1  - B0_0
 //		B1_0/B1_1  - B1_0
 
-
 int main(void) {
 	SystemInit();
 
-#ifndef  EMB_FLASH
+#ifndef EMB_FLASH
 	/* Set the Vector Table base location at 0x20000000 */
 	NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0);
-#else  /* VECT_TAB_FLASH  */
+#else /* VECT_TAB_FLASH  */
 	/* Set the Vector Table base location at 0x08000000 */
 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
 #endif
@@ -38,5 +33,6 @@ int main(void) {
 	enable_interrupt(TIM2_IRQn, 7, 0);
 	enable_interrupt(EXTI15_10_IRQn, 7, 1);
 
-	while (1) {}
+	while (1) {
+	}
 }
