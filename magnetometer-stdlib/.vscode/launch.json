@@ -1,0 +1,76 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "GDB ARM",
+			"type": "cppdbg",
+			"request": "launch",
+			"miDebuggerPath": "arm-none-eabi-gdb.exe",
+			"targetArchitecture": "arm",
+			"program": "${workspaceRoot}/bin/Debug/magnetometer-stdlib.elf",
+			"setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+				{
+					"text": "file d:/Temp/stm32l152vb/magnetometer-stdlib/bin/Debug/magnetometer-stdlib.elf"
+				},
+				{
+					"text": "target remote localhost:2331"
+				},
+				{
+					"text": "monitor reset init"
+				},
+				{
+					"text": "monitor speed 30"
+				},
+				{
+					"text": "monitor endian little"
+				},
+				{
+					"text": "monitor reset"
+				},
+				{
+					"text": "monitor speed auto"
+				},
+				{
+					"text": "set remote memory-write-packet-size 1024"
+				},
+				{
+					"text": "set remote memory-write-packet-size fixed"
+				},
+				{
+					"text": "monitor flash download = 1"
+				},
+				{
+					"text": "load"
+				},
+				{
+					"text": "monitor reset"
+				},
+				{
+					"text": "tbreak main"
+				}
+			],
+			"externalConsole": false,
+			"cwd": "${workspaceRoot}"
+		},
+		{
+			"name": "Old Debug GDB ARM",
+			"type": "gdb",
+			"request": "attach",
+			"executable": "${workspaceRoot}\\bin\\Debug\\magnetometer-stdlib.elf",
+			"target": "localhost:2331",
+			"cwd": "${workspaceRoot}",
+			"gdbpath": "arm-none-eabi-gdb.exe",
+            "remote": true,
+            "autorun": [
+                "load ./bin/Debug/magnetometer-stdlib.elf",
+                "break main",
+                "monitor reset"
+            ]            
+		}
+	]
+}

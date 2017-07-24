@@ -1,0 +1,59 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "0.1.0",
+	"windows": {
+		"command": "build.bat",
+		"args": [],
+		"isShellCommand": true,
+		"showOutput": "always",
+		"echoCommand": true,
+		"suppressTaskName": true,
+		"tasks": [
+			{
+				"taskName": "Build Debug",
+				"isBuildCommand": true,
+				"args": [
+					"debug"
+				]
+			},
+			{
+				"taskName": "Build Release",
+				"args": [
+					"release"
+				]
+			},
+			{
+				"taskName": "Clean-up",
+				"args": [
+					"clean"
+				]
+			},{
+				"taskName": "Run GDB server",
+				"isTestCommand": true,
+				"command": "RunGDB"
+			}
+		],
+		"problemMatcher": {
+			"owner": "cpp",
+			"fileLocation": [
+				"relative",
+				"${workspaceRoot}"
+			],
+			"pattern": {
+				"regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+				"file": 1,
+				"line": 2,
+				"column": 3,
+				"severity": 4,
+				"message": 5
+			}
+		}
+	},
+	"linux": {
+		"command": "echo",
+		"args": [
+			"Hello World"
+		]
+	}
+}
